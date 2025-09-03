@@ -12,8 +12,10 @@ const Layout = ({ children }) => {
     const [openDropdown, setOpenDropdown] = useState(null);
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
     const sidebarRef = useRef(null);
+    const profileRef = useRef(null);
 
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
@@ -23,11 +25,14 @@ const Layout = ({ children }) => {
     useEffect(() => {
         function handleClickOutside(event) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setIsDropdownOpen(false);
+                setIsOpen(false);
             }
             if (sidebarRef.current && !sidebarRef.current.contains(event.target) &&
                 !event.target.closest('button')) {
                 setIsSidebarOpen(false);
+            }
+            if (profileRef.current && !profileRef.current.contains(event.target)) {
+                setIsOpen(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
@@ -54,9 +59,9 @@ const Layout = ({ children }) => {
     }, []);
 
     // Toggle dropdown
-    const toggleDropdown = () => {
+    const toggleDropdown = (index) => {
         console.log("ia m clicked")
-        setIsDropdownOpen(!isDropdownOpen);
+        setOpenDropdown(openDropdown === index ? null : index);
     };
 
     // Handle menu item clicks
@@ -70,6 +75,9 @@ const Layout = ({ children }) => {
     // Toggle sidebar
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
+    };
+    const toggleProfileDropdown = () => {
+        setIsOpen(!isOpen);
     };
 
     const toggleSidebarCollapse = () => {
@@ -111,7 +119,7 @@ const Layout = ({ children }) => {
                                 src={PoloLogo}
                                 alt="Profile"
                                 className={`
-                                    ${isSidebarCollapsed ? "w-15 h-10 ":" w-15 h-15 mb-4 "}
+                                    ${isSidebarCollapsed ? "w-15 h-10 " : " w-15 h-15 mb-4 "}
                                     
                                     rounded object-top border-2 border-gray-300 hover:border-blue-500 transition-colors duration-200 cursor-pointer`}
                             />
@@ -135,7 +143,34 @@ const Layout = ({ children }) => {
                                             </a>
                                         </li>)
                                     })) : ''}
-
+                                <li>
+                                    <button
+                                        onClick={() => toggleDropdown(2)}
+                                        className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded"
+                                    >
+                                        Menu 2
+                                    </button>
+                                    {openDropdown === 2 && (
+                                        <ul className="pl-6 py-2 space-y-1">
+                                            <li>
+                                                <a
+                                                    href="#"
+                                                    className="block px-2 py-1 text-sm hover:bg-gray-200 rounded"
+                                                >
+                                                    Option A
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a
+                                                    href="#"
+                                                    className="block px-2 py-1 text-sm hover:bg-gray-200 rounded"
+                                                >
+                                                    Option B
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    )}
+                                </li>
 
                                 {/* 
                                 <li>
@@ -205,17 +240,17 @@ const Layout = ({ children }) => {
 
 
                         {/* Profile Dropdown Container (Right) */}
-                        <div className="relative" ref={dropdownRef}>
+                        <div className="relative" ref={profileRef}>
                             {/* Circular Profile Image */}
                             <img
-                                onClick={toggleDropdown}
+                                onClick={toggleProfileDropdown}
                                 src={PoloLogo}
                                 alt="Profile"
                                 className="w-10 h-10 rounded-full object-cover border-2 border-gray-300 hover:border-blue-500 transition-colors duration-200 cursor-pointer"
                             />
 
                             {/* Dropdown Menu */}
-                            {isDropdownOpen && (
+                            {isOpen && (
                                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20">
                                     {/* Dropdown Arrow */}
                                     <div className="absolute top-0 right-5 -mt-2 w-0 h-0 border-l-8 border-r-8 border-b-8 border-l-transparent border-r-transparent border-b-white"></div>
