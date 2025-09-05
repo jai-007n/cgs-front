@@ -7,7 +7,14 @@ import { FaBars, FaCog, FaUser, FaSignOutAlt, FaTimes, FaFastBackward } from 're
 import { FaHome, FaChartBar, FaFileAlt, FaQuestionCircle, FaPlus } from 'react-icons/fa';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import DynamicIcon from '@/components/DynamicIcon';
-const Layout = ({ children }) => {
+import { useAppDispatch, useAppSelector } from "../../lib/hooks/hooks";
+import { logoutUserAction } from "../../lib/features/userSlice";
+import { useNavigate } from "react-router-dom";
+const Layout = () => {
+
+    const dispatch = useAppDispatch()
+    const navigate = useNavigate()
+    const { isAuthenticated, user,isLoading } = useAppSelector((state) => state.user);
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [openDropdown, setOpenDropdown] = useState(null);
 
@@ -84,6 +91,10 @@ const Layout = ({ children }) => {
         setIsSidebarCollapsed(!isSidebarCollapsed);
     };
 
+    const handleLogout = () => {
+        dispatch(logoutUserAction({ navigate }))
+    }
+
 
     const menuItems = [
         { icon: 'FaHome', label: 'Home', redirect: '#' },
@@ -98,7 +109,7 @@ const Layout = ({ children }) => {
         <>
             <div className="flex">
                 <div className={`hidden md:block min-h-screen  m-1 p-1
-                bg-gradient-to-b from-red-500 to-yellow-500 relative
+                bg-gradient-to-b from-red-500 from-20% via-green-500 via-40% to-yellow-500 relative
                 
                  ${isSidebarCollapsed ? 'w-16' : 'w-2/12'} duration-300`}
                 >
@@ -126,14 +137,13 @@ const Layout = ({ children }) => {
                         </div>
                         <nav className="flex-grow ">
                             <ul className="space-y-2">
-
                                 {menuItems?.length > 0 ? (
                                     menuItems.map((menu, index) => {
-                                        return (<li className="flex p-2" key={index}>
-                                            <a href="#" title={menu.label} className="float-left text-gray-700 hover:bg-green-100 rounded-md mt-2 p-2 ">
+                                        return (<li className="flex p-1 hover:bg-green-100" key={index}>
+                                            <a href="#" title={menu.label} className="float-left text-gray-700  rounded-md mt-2 p-2 ">
                                                 <span className={`text-2xl block float-left `}>
                                                     <DynamicIcon name={menu.icon} library={'fa'}
-                                                        className={`text-green-900 rounded-full duration-300
+                                                        className={`text-green-900 rounded-full duration-500
                                                ${isSidebarCollapsed && "rotate-[360deg]"}
                                             `} />
                                                 </span>
@@ -143,32 +153,67 @@ const Layout = ({ children }) => {
                                             </a>
                                         </li>)
                                     })) : ''}
-                                <li>
+                                <li className="flex flex-col p-2 relative">
                                     <button
                                         onClick={() => toggleDropdown(2)}
-                                        className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded"
+                                        className="flex float-left text-gray-700 hover:bg-green-100 rounded-md mt-2 ml-1"
                                     >
-                                        Menu 2
+                                        <span className={`text-2xl block float-left `}>
+                                            <DynamicIcon name={'FaFileAlt'} library={'fa'}
+                                                className={`text-green-900 rounded-full duration-300
+                                               ${isSidebarCollapsed && "rotate-[360deg]"}
+                                            `} />
+                                        </span>
+                                        <span className={`ml-3 text-left text-xl text-green-700 origin-left font-medium flex-1 duration-300
+                                        ${isSidebarCollapsed && "hidden scale-0"}
+                                        `}> Projects</span>
+
+                                        <DynamicIcon name={'FaAngleRight'} library={'fa'}
+                                            className={`ml-1 mt-1 text-xl text-green-900 duration-300
+                                                 ${openDropdown === 2 && "rotate-[90deg]"}
+                                                `}
+                                        />
+
                                     </button>
                                     {openDropdown === 2 && (
-                                        <ul className="pl-6 py-2 space-y-1">
-                                            <li>
-                                                <a
-                                                    href="#"
-                                                    className="block px-2 py-1 text-sm hover:bg-gray-200 rounded"
-                                                >
-                                                    Option A
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a
-                                                    href="#"
-                                                    className="block px-2 py-1 text-sm hover:bg-gray-200 rounded"
-                                                >
-                                                    Option B
-                                                </a>
-                                            </li>
-                                        </ul>
+                                        <div className={`overflow-hidden transition-all duration-300 ease-in-out  mt-2
+                                            ${openDropdown === 2 ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'
+                                            }`}
+                                        >
+                                            <ul className={`pl-10 py-2 space-y-2 bg-gradient-to-b from-indigo-500 via-purple-500 to-pink-500 rounded-md   `}>
+                                                <li>
+                                                    <a
+                                                        href="#"
+                                                        className="block px-2 py-1 text-sm hover:bg-gray-200 rounded"
+                                                    >
+                                                        <span className={`text-2xl block float-left `}>
+                                                            <DynamicIcon name={'FaFileAlt'} library={'fa'}
+                                                                className={`text-white rounded-full duration-300
+                                                                ${isSidebarCollapsed && "rotate-[360deg]"}`} />
+                                                        </span>
+                                                        <span className={`ml-3 text-left text-xl text-white origin-left font-medium flex-1 duration-300
+                                                             ${isSidebarCollapsed && "hidden scale-0"}
+                                                            `}> Projects</span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a
+                                                        href="#"
+                                                        className="block px-2 py-1 text-sm hover:bg-gray-200 rounded"
+                                                    >
+                                                        <span className={`text-2xl block float-left `}>
+                                                            <DynamicIcon name={'FaFileAlt'} library={'fa'}
+                                                                className={`text-white rounded-full duration-300
+                                               ${isSidebarCollapsed && "rotate-[360deg]"}
+                                            `} />
+                                                        </span>
+                                                        <span className={`ml-3 text-left text-xl text-white origin-left font-medium flex-1 duration-300
+                                        ${isSidebarCollapsed && "hidden scale-0"}
+                                        `}> Projects</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
                                     )}
                                 </li>
 
@@ -256,6 +301,12 @@ const Layout = ({ children }) => {
                                     <div className="absolute top-0 right-5 -mt-2 w-0 h-0 border-l-8 border-r-8 border-b-8 border-l-transparent border-r-transparent border-b-white"></div>
 
                                     {/* Menu Items */}
+                                    <div
+                                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    >
+
+                                        {user?.name}
+                                    </div>
                                     <button
                                         onClick={() => handleMenuItemClick('Settings')}
                                         className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -272,7 +323,7 @@ const Layout = ({ children }) => {
                                     </button>
                                     <hr className="my-1" />
                                     <button
-                                        onClick={() => handleMenuItemClick('Logout')}
+                                        onClick={() => handleLogout()}
                                         className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                     >
                                         <FaSignOutAlt className="mr-3 text-gray-500" />

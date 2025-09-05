@@ -6,11 +6,38 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import PoloLogo from '@/assets/polo-logo.jpg'
 
+import { useAppDispatch, useAppSelector } from "../../lib/hooks/hooks";
+import { loginUserAction } from "../../lib/features/userSlice";
+import { LoadingIndicator } from "../loading-indicator";
+import { ModifiedToast } from "../toaster";
+import { ToastContainer } from "react-toastify";
+import { useNavigate } from 'react-router-dom';
+
 const Login = () => {
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate()
+    const { isAuthenticated, user, isLoading } = useAppSelector((state) => state.user);
+    
+    const handleFormSubmit = (e) => {
+        e.preventDefault();
+        let values = {
+            email: e.target.elements.email?.value,
+            password: e.target.elements.password?.value,
+            rememberMe: e.target.elements.rememberMe?.checked
+        }
+        let frm = document.getElementById('loginForm')
+        dispatch(loginUserAction({ values, frm, navigate }))
+
+    };
     const [showPassword, setShowPassword] = useState(false);
+    // const [isLoading, setisLoading] = useState(false);
 
     return (
         <div className="relative min-h-screen">
+            {console.log(isLoading)}
+            {!isLoading ? <LoadingIndicator /> : ""}
+            <ModifiedToast />
+            <ToastContainer />
             {/* Background color layer */}
             <div className="fixed top-0 left-0 w-screen h-screen bg-gradient-to-b from-red-500 to-blue-500 -z-10"></div>
             <div className="min-h-[100dvh] bg-gradient-to-t from-red-300 to-blue-300">
@@ -26,7 +53,10 @@ const Login = () => {
 
                     {/* Right Side - Login Form */}
                     <div className="flex-1 md:w-1/2 flex md:items-center md:justify-center p-6 pt-10 md:pt-0 min-h-[100dvh]">
-                        <form className="w-full max-w-md space-y-6 bg-white p-8 rounded-md shadow-md">
+                        <form
+                            onSubmit={handleFormSubmit}
+                            id="loginForm"
+                            className="w-full max-w-md space-y-6 bg-white p-8 rounded-md shadow-md">
                             {/* ACME Badge */}
                             <div className="flex justify-center">
                                 <div className="bg-black text-white rounded-full w-16 h-16 flex items-center justify-center text-xl font-bold shadow-md">
@@ -92,9 +122,9 @@ const Login = () => {
                             >
                                 Login
                             </button>
-                             <a href="/dashboard" className="text-blue-600 hover:underline">
-                                    Dashboard
-                                </a>
+                            <a href="/dashboard" className="text-blue-600 hover:underline">
+                                Dashboard
+                            </a>
                         </form>
                     </div>
                 </div>
