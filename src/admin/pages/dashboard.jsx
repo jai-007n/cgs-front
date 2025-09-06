@@ -3,7 +3,9 @@ function Dashboard() {
 
   return (
     <>
-      I am Dashboard
+      <div className="">
+        I am Dashboard
+      </div>
     </>
   )
 }

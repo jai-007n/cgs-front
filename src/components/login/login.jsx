@@ -35,7 +35,7 @@ const Login = () => {
     return (
         <div className="relative min-h-screen">
             {console.log(isLoading)}
-            {!isLoading ? <LoadingIndicator /> : ""}
+            {isLoading ? <LoadingIndicator /> : ""}
             <ModifiedToast />
             <ToastContainer />
             {/* Background color layer */}
