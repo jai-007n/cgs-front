@@ -5,20 +5,34 @@ export function authToken() {
     return localStorage.getItem('currentToken') ? JSON.parse(localStorage.getItem('currentToken')) : null
 }
 
-export function commonCatchBlock(err, frm = false, loginAction = false) {
+export function commonCatchBlock(err, postData, action = '', frmName = false, loginAction = false) {
+
     if (!err.response) {
-        return toast.error('Something went wrong', {
+        return toast.error('Network Failed Error !!!', {
             duration: 2000,
             position: 'top-right',
         })
     }
-    if (!loginAction) {
-        if (err.response.status === 401) {
-            destroyTokenDetails()
-            window.location.href = "/"
-            return false
+
+    if (err.response.status === 401) {
+        try {
+            if (err.response?.data?.isNewToken) {
+                localStorage.setItem('currentToken', JSON.stringify(err.response?.data?.token))
+                
+                postData.dispatch(action({ postData }))
+            }
         }
+        catch (err) {
+            return toast.error('Something went wrong', {
+                duration: 2000,
+                position: 'top-right',
+            })
+        }
+        destroyTokenDetails()
+        postData.navigate("/", { replace: true })
+        return false
     }
+
 
     if (err.response.status === 409) {
         return toast.error('Something went wrong', {
@@ -41,24 +55,46 @@ export function commonCatchBlock(err, frm = false, loginAction = false) {
         });
     }
 
-    if (frm) {
-        let errors = err.response.data;
-        frm.find('.form-group').removeClass('error');
-        frm.find('.help-block').html('');
-        let checkFirstEle = 0;
-        jQuery.each(errors, function (i, _msg) {
-            let el = frm.find("[name=" + i + "]");
-            if (checkFirstEle === 0) {
-                el.focus();
-                checkFirstEle++;
-            }
-            el.parents('.form-group').find('.help-block').addClass('text-red-500')
-            el.parents('.form-group').find('.help-block').html(_msg);
-        });
-        return toast.error(err.response.data.message, {
-            duration: 2000,
-            position: 'top-right',
-        })
+    if (frmName) {
+
+        try {
+            let errors = err.response.data;
+            const frm = document.getElementById(frmName)
+
+            frm.querySelectorAll('.form-group')
+                .forEach(el => el.classList.remove('error'));
+            frm.querySelectorAll('.help-block')
+                .forEach(el => el.innerHTML = '');
+
+            // for (const element of form.querySelectorAll('.yourClassName')) {
+            //   element.classList.remove('yourClassName');
+            // }
+
+            Object.keys(errors).forEach(function (i) {
+                let el = document.querySelector(`input[name="${i}"]`);
+                if (el) {
+                    el.focus();
+                    el.classList.add('outline', 'outline-1', 'outline-red-500',
+                        'ring', 'ring-1', 'ring-red-500', 'ring-offset-1'
+                    );
+                    const errBlock = el.nextElementSibling;
+                    errBlock.classList.add('text-red-500');
+                    errBlock.innerHTML = errors[i];
+                }
+            });
+
+            return toast.error(err.response.data.message, {
+                duration: 2000,
+                position: 'top-right',
+            })
+        }
+        catch (ex) {
+            console.log(ex)
+            return toast.error("Something gone wrong !", {
+                duration: 2000,
+                position: 'top-right',
+            });
+        }
     } else {
         if (err.response?.data?.message)
             toast.error(err.response.data.message, {
@@ -72,6 +108,7 @@ export function commonCatchBlock(err, frm = false, loginAction = false) {
             position: 'top-right',
         });
     }
+    return false
 }
 
 export const commonValidatorChecked = (data, validatorValid, formName = 'forgotPasswordForm') => {
@@ -119,11 +156,11 @@ export function commonFrontCatchBlock(err, frm) {
 export function authHeader(url) {
 
     let currentToken = localStorage.getItem('currentToken') ? JSON.parse(localStorage.getItem('currentToken')) : null
-    
+
     if (currentToken) {
         return {
             "x-auth-token": currentToken,
-            "Authorization":currentToken
+            "Authorization": currentToken
             // "x-time-zone": getBrowserTimezone(),
             // "x-hmac-token": generateHash((url))
         }

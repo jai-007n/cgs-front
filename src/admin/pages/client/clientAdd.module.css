@@ -1,0 +1,19 @@
+.disabledLink {
+    /* pointer-events: none; */
+    /* cursor: default; */
+    /* Optional: change cursor to indicate non-interactable */
+    /* opacity: 0.6; */
+    /* Optional: visually dim the link */
+
+    @apply pointer-events-none opacity-50
+}
+
+.disabledSubmitLink {
+    /* pointer-events: none; */
+    /* cursor: default; */
+    /* Optional: change cursor to indicate non-interactable */
+    /* opacity: 0.6; */
+    /* Optional: visually dim the link */
+
+    @apply pointer-events-none opacity-50 cursor-progress
+}

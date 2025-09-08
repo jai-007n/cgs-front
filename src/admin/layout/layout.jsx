@@ -12,7 +12,7 @@ const Layout = () => {
 
                 <div className="flex flex-col w-full min-h-screen ">
                     <Header />
-                    <div className="relative  w-full min-h-screen  m-1 p-1  bg-gray-600 ">
+                    <div className="relative  w-full min-h-screen  m-1 p-1  ">
                         <Outlet />
                     </div>
                 </div>

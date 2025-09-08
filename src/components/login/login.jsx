@@ -16,8 +16,8 @@ import { useNavigate } from 'react-router-dom';
 const Login = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate()
-    const { isAuthenticated, user, isLoading } = useAppSelector((state) => state.user);
-    
+    const { isLoading } = useAppSelector((state) => state.user);
+
     const handleFormSubmit = (e) => {
         e.preventDefault();
         let values = {
@@ -34,7 +34,6 @@ const Login = () => {
 
     return (
         <div className="relative min-h-screen">
-            {console.log(isLoading)}
             {isLoading ? <LoadingIndicator /> : ""}
             <ModifiedToast />
             <ToastContainer />

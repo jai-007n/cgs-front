@@ -7,7 +7,7 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import DynamicIcon from '@/components/DynamicIcon';
 import { useAppDispatch } from "../../lib/hooks/hooks";
 import { logoutUserAction } from "../../lib/features/userSlice";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaSignOutAlt } from "react-icons/fa";
 import { LogOut } from "lucide-react";
 
@@ -61,8 +61,9 @@ export default function Sidebar() {
     }
 
     const menuItems = [
-        { icon: 'FaHome', label: 'Home', redirect: '#' },
+        { icon: 'FaHome', label: 'Home', redirect: '/dashboard', submenu: false },
         { icon: 'FaUser', label: 'Profile', redirect: '#' },
+        { icon: 'FaUser', label: 'Client', redirect: '/client/add' },
         { icon: 'FaChartBar', label: 'Chart', redirect: '#' },
         { icon: 'FaFileAlt', label: 'Documents', redirect: '#' },
         { icon: 'FaCog', label: 'Setting', redirect: '#' },
@@ -103,7 +104,7 @@ export default function Sidebar() {
                         {menuItems?.length > 0 ? (
                             menuItems.map((menu, index) => {
                                 return (<li className="flex p-1 hover:bg-green-100" key={index}>
-                                    <a href="#" title={menu.label} className="float-left text-gray-700  rounded-md mt-2 p-2 ">
+                                    <Link to={menu.redirect} title={menu.label} className="float-left text-gray-700  rounded-md mt-2 p-2 ">
                                         <span className={`text-2xl block float-left `}>
                                             <DynamicIcon name={menu.icon} library={'fa'}
                                                 className={`text-green-900 rounded-full duration-500
@@ -113,7 +114,7 @@ export default function Sidebar() {
                                         <span className={`ml-3 text-xl text-green-700 origin-left font-medium flex-1 duration-300
                                         ${isSidebarCollapsed && "hidden scale-0"}
                                         `}> {menu.label}</span>
-                                    </a>
+                                    </Link>
                                 </li>)
                             })) : ''}
                         <li className="flex flex-col p-2 relative">
@@ -203,7 +204,7 @@ export default function Sidebar() {
 
                 {/* Button at the Bottom */}
                 {/* <div className="p-1 "> */}
-                    {/* <button
+                {/* <button
                         onClick={toggleSidebarCollapse}
                         className="w-3/4 text-xl  text-green-900 font-medium py-2 px-2 rounded-lg transition-colors duration-200 flex items-center justify-center">
                         <FontAwesomeIcon icon={isSidebarCollapsed ? faArrowRight : faArrowLeft} />
